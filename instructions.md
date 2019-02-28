@@ -10,7 +10,7 @@ az eventhubs eventhub create --resource-group <existing rg-name> --namespace-nam
 
 * --message-retention: Number of days to retain events for this Event Hub, value should be 1 to 7 days.
 
-* --partition-count: Number of partitions created for the Event Hub, value should be 2 to 32 days.
+* --partition-count: Number of partitions created for the Event Hub, value should be 2 to 32.
 
 ## ADLS Gen1 
 
