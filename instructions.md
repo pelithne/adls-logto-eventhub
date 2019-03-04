@@ -41,4 +41,34 @@ az dls fs list --account <adls name> --path /<folder name>
 az dls fs move --account <adls name> --source-path /<folder name>/<file name> --destination-path /<folder name>/<new file name>
 ````
 
+## Azure Monitor
+Azure monitor should be setup to allow ADLS to export logs to the Eventhub. 
+
+* Ref: https://docs.microsoft.com/en-us/cli/azure/monitor/diagnostic-settings?view=azure-cli-latest
+* Ref: http://techgenix.com/azure-diagnostic-settings/
+
+````
+az monitor diagnostic-settings create --resource <resource name> -n <diagnostic setting name>
+                           --event-hub-rule <eventHubRuleID> --storage-account <storageAccount>
+                           --logs '[
+                             {
+                               "category": "WorkflowRuntime",
+                               "enabled": true,
+                               "retentionPolicy": {
+                                 "enabled": false,
+                                 "days": 0
+                               }
+                             }
+                           ]'
+                           --metrics '[
+                             {
+                               "category": "WorkflowRuntime",
+                               "enabled": true,
+                               "retentionPolicy": {
+                                 "enabled": false,
+                                 "days": 0
+                               }
+                             }
+                           ]'
+````
 
