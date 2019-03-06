@@ -46,29 +46,8 @@ Azure monitor should be setup to allow ADLS to export logs to the Eventhub.
 
 * Ref: https://docs.microsoft.com/en-us/cli/azure/monitor/diagnostic-settings?view=azure-cli-latest
 * Ref: http://techgenix.com/azure-diagnostic-settings/
+* Ref: https://docs.microsoft.com/en-us/azure/azure-monitor/platform/diagnostic-logs-overview
 
 ````
-az monitor diagnostic-settings create --resource <resource name> -n <diagnostic setting name>
-                           --event-hub-rule <eventHubRuleID> --storage-account <storageAccount>
-                           --logs '[
-                             {
-                               "category": "WorkflowRuntime",
-                               "enabled": true,
-                               "retentionPolicy": {
-                                 "enabled": false,
-                                 "days": 0
-                               }
-                             }
-                           ]'
-                           --metrics '[
-                             {
-                               "category": "WorkflowRuntime",
-                               "enabled": true,
-                               "retentionPolicy": {
-                                 "enabled": false,
-                                 "days": 0
-                               }
-                             }
-                           ]'
+az monitor diagnostic-settings create -n DiagEventHub --resource '/subscriptions/6f66105f-d352-482f-970b-a1d2a478fb64/resourceGroups/adls-test2/providers/Microsoft.DataLakeStore/accounts/pelithneadlstest' --event-hub-rule '/subscriptions/6f66105f-d352-482f-970b-a1d2a478fb64/resourceGroups/adls-test2/providers/Microsoft.EventHub/namespaces/pelithnehub/authorizationrules/RootManageSharedAccessKey' --event-hub pelithnehub --logs '[{"category":"Audit","Enabled":true}]' --metrics '[{"category":"AllMetrics","Enabled":true}]'
 ````
-
