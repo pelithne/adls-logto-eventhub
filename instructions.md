@@ -48,6 +48,14 @@ Azure monitor should be setup to allow ADLS to export logs to the Eventhub.
 * Ref: http://techgenix.com/azure-diagnostic-settings/
 * Ref: https://docs.microsoft.com/en-us/azure/azure-monitor/platform/diagnostic-logs-overview
 
+
+Example:
 ````
 az monitor diagnostic-settings create -n DiagEventHub --resource '/subscriptions/6f66105f-d352-482f-970b-a1d2a478fb64/resourceGroups/adls-test2/providers/Microsoft.DataLakeStore/accounts/pelithneadlstest' --event-hub-rule '/subscriptions/6f66105f-d352-482f-970b-a1d2a478fb64/resourceGroups/adls-test2/providers/Microsoft.EventHub/namespaces/pelithnehub/authorizationrules/RootManageSharedAccessKey' --event-hub pelithnehub --logs '[{"category":"Audit","Enabled":true}]' --metrics '[{"category":"AllMetrics","Enabled":true}]'
 ````
+
+## Testing the solution
+
+### Create events
+
+### Consume events
