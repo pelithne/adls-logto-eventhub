@@ -2,7 +2,7 @@
 
 ## EventHub
 First, and Eventhub should be created. This will later be referenced by the ADLS GEN1 account.
-# Create an Event Hubs namespace. Specify a name for the Event Hubs namespace.
+
 ### Create Event Hubs namespace
 
 ````
