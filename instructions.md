@@ -184,6 +184,8 @@ Should give output similar to this
 ````
 
 #### Create a Python script to receive events
+
+Ref: https://docs.microsoft.com/en-us/azure/event-hubs/event-hubs-python-get-started-receive
  
 Create a script called recv.py.
 Paste the following code into recv.py, replacing the ADDRESS, USER, and KEY values with the values you obtained from the Azure portal in the previous section.
@@ -256,4 +258,8 @@ Event example
     },
 ````
 
-https://docs.microsoft.com/en-us/azure/event-hubs/event-hubs-python-get-started-receive
+## Potential next steps
+https://docs.microsoft.com/en-us/azure/stream-analytics/stream-analytics-power-bi-dashboard
+
+
+
