@@ -134,7 +134,7 @@ Azure monitor should be setup to allow ADLS to export logs to the Eventhub.
 * Ref: https://docs.microsoft.com/en-us/azure/azure-monitor/platform/diagnostic-logs-overview
 
 
-Example:
+The example below creates a diagnistic setting in the specified ADLS, and activates some logs and metrics:
 ````
 az monitor diagnostic-settings create -n DiagEventHub --resource '/subscriptions/6f66105f-d352-482f-970b-a1d2a478fb64/resourceGroups/adls-test2/providers/Microsoft.DataLakeStore/accounts/pelithadls' --event-hub-rule '/subscriptions/6f66105f-d352-482f-970b-a1d2a478fb64/resourceGroups/adls-test2/providers/Microsoft.EventHub/namespaces/pelithubns/authorizationrules/RootManageSharedAccessKey' --event-hub pelithub --logs '[{"category":"Audit","Enabled":true}]' --metrics '[{"category":"AllMetrics","Enabled":true}]'
 ````
@@ -143,103 +143,17 @@ az monitor diagnostic-settings create -n DiagEventHub --resource '/subscriptions
 The activities below should create events in ADLS, which should be exported to the Eventhub, so that they can be consumed.
 
 ### Generate events
+Creating a folder in ADLS will generate an audit event:
 
-#### Create folders in ADLS
 ````console
 az dls fs create --account <adls name> --path /<folder name> --folder
 ````
 
-#### Note: The --folder parameter ensures that the command creates a folder. If this parameter is not present, the command creates an empty file called mynewfolder at the root of the Data Lake Storage Gen1 account.
 
-#### Upload data to ADLS
-````console
-az dls fs upload --account <adls name> --source-path "<path to data>" --destination-path "/<folder name>/<file name>"
-````
-
-#### List files
-````console
-az dls fs list --account <adls name> --path /<folder name>
-````
-
-#### Rename files
-````console
-az dls fs move --account <adls name> --source-path /<folder name>/<file name> --destination-path /<folder name>/<new file name>
-````
 ### Consume events
-You need a 
-````
-az eventhubs namespace authorization-rule keys list --resource-group dummyresourcegroup --namespace-name dummynamespace --name RootManageSharedAccessKey
-````
-Should give output similar to this
-````
-{
-  "aliasPrimaryConnectionString": null,
-  "aliasSecondaryConnectionString": null,
-  "keyName": "RootManageSharedAccessKey",
-  "primaryConnectionString": "Endpoint=sb://pelithnehub2ns.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=0aSQJrmKpmLViR008rtmd+qXKasFUbj+qI2huxatYjo=",
-  "primaryKey": "0aSQJrmKpmLViR008rtmd+qXKasFUbj+qI2huxatYjo=",
-  "secondaryConnectionString": "Endpoint=sb://pelithnehub2ns.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=GLDe6R1G+Drcu6PeEgilOKR/y50nCJJ8RErZ9OvVEYU=",
-  "secondaryKey": "GLDe6R1G+Drcu6PeEgilOKR/y50nCJJ8RErZ9OvVEYU="
-}
-````
+One way to consume events from the event hub, is to use the "Azure Event Hub Explorer" extension to VS Code. It can be found here: https://marketplace.visualstudio.com/items?itemName=Summer.azure-event-hub-explorer
 
-#### Create a Python script to receive events
-
-Ref: https://docs.microsoft.com/en-us/azure/event-hubs/event-hubs-python-get-started-receive
- 
-Create a script called recv.py.
-Paste the following code into recv.py, replacing the ADDRESS, USER, and KEY values with the values you obtained from the Azure portal in the previous section.
-Address=
-
-````python
-import os
-import sys
-import logging
-import time
-from azure.eventhub import EventHubClient, Receiver, Offset
-
-logger = logging.getLogger("azure")
-
-# Address can be in either of these formats:
-# "amqps://<URL-encoded-SAS-policy>:<URL-encoded-SAS-key>@<mynamespace>.servicebus.windows.net/myeventhub"
-# "amqps://<mynamespace>.servicebus.windows.net/myeventhub"
-# For example:
-ADDRESS = "amqps://mynamespace.servicebus.windows.net/myeventhub"
-
-# SAS policy and key are not required if they are encoded in the URL
-USER = "RootManageSharedAccessKey"
-KEY = "namespaceSASKey"
-CONSUMER_GROUP = "$default"
-OFFSET = Offset("-1")
-PARTITION = "0"
-
-total = 0
-last_sn = -1
-last_offset = "-1"
-client = EventHubClient(ADDRESS, debug=False, username=USER, password=KEY)
-try:
-    receiver = client.add_receiver(CONSUMER_GROUP, PARTITION, prefetch=5000, offset=OFFSET)
-    client.run()
-    start_time = time.time()
-    for event_data in receiver.receive(timeout=100):
-        last_offset = event_data.offset
-        last_sn = event_data.sequence_number
-        print("Received: {}, {}".format(last_offset, last_sn))
-        total += 1
-
-    end_time = time.time()
-    client.stop()
-    run_time = end_time - start_time
-    print("Received {} messages in {} seconds".format(total, run_time))
-
-except KeyboardInterrupt:
-    pass
-finally:
-    client.stop()
-````
-
-
-## Use VS Code to consume events
+Follow instructions to start monitoring event hub messages. 
 
 Event example
 ````
@@ -258,8 +172,7 @@ Event example
     },
 ````
 
-## Potential next steps
-https://docs.microsoft.com/en-us/azure/stream-analytics/stream-analytics-power-bi-dashboard
+
 
 
 
