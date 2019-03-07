@@ -7,6 +7,7 @@ First, and Eventhub should be created. This will later be referenced by the ADLS
 
 ````
 az eventhubs namespace create --name <Event Hubs namespace> --resource-group <resource group name> -l <region>
+
 ````
 
 This will give an output similar to this
@@ -37,6 +38,7 @@ This will give an output similar to this
 ````console
 az eventhubs eventhub create --resource-group <existing rg-name> --namespace-name <namespace name> --name <eventhub name> --message-retention 4 --partition-count 15
 ````
+
 
 * --message-retention: Number of days to retain events for this Event Hub, value should be 1 to 7 days.
 
@@ -134,7 +136,7 @@ Azure monitor should be setup to allow ADLS to export logs to the Eventhub.
 
 Example:
 ````
-az monitor diagnostic-settings create -n DiagEventHub --resource '/subscriptions/6f66105f-d352-482f-970b-a1d2a478fb64/resourceGroups/adls-test2/providers/Microsoft.DataLakeStore/accounts/pelithneadlstest' --event-hub-rule '/subscriptions/6f66105f-d352-482f-970b-a1d2a478fb64/resourceGroups/adls-test2/providers/Microsoft.EventHub/namespaces/pelithnehub/authorizationrules/RootManageSharedAccessKey' --event-hub pelithnehub --logs '[{"category":"Audit","Enabled":true}]' --metrics '[{"category":"AllMetrics","Enabled":true}]'
+az monitor diagnostic-settings create -n DiagEventHub --resource '/subscriptions/6f66105f-d352-482f-970b-a1d2a478fb64/resourceGroups/adls-test2/providers/Microsoft.DataLakeStore/accounts/pelithadls' --event-hub-rule '/subscriptions/6f66105f-d352-482f-970b-a1d2a478fb64/resourceGroups/adls-test2/providers/Microsoft.EventHub/namespaces/pelithubns/authorizationrules/RootManageSharedAccessKey' --event-hub pelithub --logs '[{"category":"Audit","Enabled":true}]' --metrics '[{"category":"AllMetrics","Enabled":true}]'
 ````
 
 ## Testing the solution
@@ -184,7 +186,9 @@ Should give output similar to this
 #### Create a Python script to receive events
  
 Create a script called recv.py.
-Paste the following code into recv.py, replacing the ADDRESS, USER, and KEY values with the values you obtained from the Azure portal in the previous section:
+Paste the following code into recv.py, replacing the ADDRESS, USER, and KEY values with the values you obtained from the Azure portal in the previous section.
+Address=
+
 ````python
 import os
 import sys
@@ -230,6 +234,26 @@ except KeyboardInterrupt:
     pass
 finally:
     client.stop()
+````
+
+
+## Use VS Code to consume events
+
+Event example
+````
+{
+      "time": "2019-03-07T08:13:23.870Z",
+      "resourceId": "/SUBSCRIPTIONS/6F66105F-D352-482F-970B-A1D2A478FB64/RESOURCEGROUPS/ADLS-TEST2/PROVIDERS/MICROSOFT.DATALAKESTORE/ACCOUNTS/PELITHADLS",
+      "category": "Audit",
+      "operationName": "CreateDirectory",
+      "resultType": "Success",
+      "resultSignature": "0",
+      "identity": "pelithne@microsoft.com",
+      "properties": {
+        "StreamName": "adl://pelithadls.azuredatalakestore.net/testfolder2",
+        "UserId": "D958C518-E765-4F1A-ADFF-5AB347FBC21C"
+      }
+    },
 ````
 
 https://docs.microsoft.com/en-us/azure/event-hubs/event-hubs-python-get-started-receive
