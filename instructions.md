@@ -36,7 +36,7 @@ This will give an output similar to this
 
 ### Create a new Eventhub
 ````console
-az eventhubs eventhub create --resource-group <existing rg-name> --namespace-name <namespace name> --name <eventhub name> --message-retention 4 --partition-count 15
+az eventhubs eventhub create --resource-group <existing rg-name> --namespace-name <eventhub namespace name> --name <eventhub name> --message-retention 4 --partition-count 3
 ````
 
 
@@ -54,23 +54,12 @@ You should get a response similar to this:
   "location": "West Europe",
   "messageRetentionInDays": 4,
   "name": "pelithnehub2",
-  "partitionCount": 15,
+  "partitionCount": 3,
   "partitionIds": [
     "0",
     "1",
     "2",
-    "3",
-    "4",
-    "5",
-    "6",
-    "7",
-    "8",
-    "9",
-    "10",
-    "11",
-    "12",
-    "13",
-    "14"
+    "3"
   ],
   "resourceGroup": "adls-test2",
   "status": "Active",
@@ -84,7 +73,7 @@ You should get a response similar to this:
 
 ### Create the Data Lake Storage Gen1 account.
 ````console
-az dls account create --account <adls name> --resource-group <existing rg-name>
+az dls account create --account <adls name> --resource-group <resource group name>
 ````
 
 You should get a response similar to this. Make a note of the resource id ("id"), as this will be used in a later step.
@@ -140,7 +129,6 @@ az monitor diagnostic-settings create -n DiagEventHub --resource '/subscriptions
 ````
 
 ## Testing the solution
-The activities below should create events in ADLS, which should be exported to the Eventhub, so that they can be consumed.
 
 ### Generate events
 Creating a folder in ADLS will generate an audit event:
